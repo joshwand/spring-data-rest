@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.springframework.data.mapping.Association;
 import org.springframework.data.mapping.PersistentEntity;
 import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.mapping.PersistentPropertyAccessor;
@@ -30,9 +31,15 @@ import org.springframework.data.mapping.context.PersistentEntities;
 import org.springframework.data.rest.core.mapping.ResourceMetadata;
 import org.springframework.data.rest.webmvc.mapping.Associations;
 import org.springframework.data.rest.webmvc.support.ExcerptProjector;
+import org.springframework.data.rest.webmvc.support.Projector;
 import org.springframework.hateoas.core.EmbeddedWrapper;
 import org.springframework.hateoas.core.EmbeddedWrappers;
 import org.springframework.util.Assert;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Oliver Gierke
@@ -46,13 +53,13 @@ public class EmbeddedResourcesAssembler {
 	private final @NonNull EmbeddedWrappers wrappers = new EmbeddedWrappers(false);
 
 	/**
-	 * Returns the embedded resources to render. This will add an {@link RelatedResource} for linkable associations if
+	 * Returns the embedded resources to render. This will add an RelatedResource for linkable associations if
 	 * they have an excerpt projection registered.
 	 *
 	 * @param instance must not be {@literal null}.
 	 * @return
 	 */
-	public Iterable<EmbeddedWrapper> getEmbeddedResources(Object instance) {
+	public Iterable<EmbeddedWrapper> getEmbeddedResources(final Object instance) {
 
 		Assert.notNull(instance, "Entity instance must not be null!");
 
@@ -74,7 +81,26 @@ public class EmbeddedResourcesAssembler {
 				return;
 			}
 
-			Object value = accessor.getProperty(association.getInverse());
+
+				// check to see if the applicable projection actually cares about this association
+				try {
+					Class projectionType =  projector.getProjectionType(instance);
+					if (projectionType == null) {
+						// continue, there is no projection being applied
+					} else {
+						Method getter = property.getGetter();
+						if (getter == null) {
+							throw new NoSuchMethodException();
+						}
+						if (projectionType.getDeclaredMethod(property.getGetter().getName()) != null) {
+							// continue, the association is present on the projection
+						}
+					}
+				} catch (NoSuchMethodException e) {
+					return;  // this association is not present on the projection
+				}
+
+				Object value = accessor.getProperty(association.getInverse());
 
 			if (value == null) {
 				return;

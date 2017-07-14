@@ -134,5 +134,10 @@ public abstract class AbstractControllerIntegrationTests {
 		public boolean hasExcerptProjection(Class<?> type) {
 			return false;
 		}
+
+		@Override
+		public Class getProjectionType(Object source) {
+			return null;
+		}
 	}
 }

@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.rest.core.mapping.ResourceMappings;
 import org.springframework.data.rest.core.mapping.ResourceMetadata;
+import org.springframework.data.rest.core.projection.ProjectionDefinitions;
 import org.springframework.util.Assert;
 
 /**
@@ -32,8 +33,10 @@ import org.springframework.util.Assert;
 @RequiredArgsConstructor
 public class DefaultExcerptProjector implements ExcerptProjector {
 
+	private final ProjectionDefinitions projectionDefinitions;
 	private final ProjectionFactory factory;
 	private final ResourceMappings mappings;
+	private final String projection;
 
 	/*
 	 * (non-Javadoc)
@@ -61,4 +64,21 @@ public class DefaultExcerptProjector implements ExcerptProjector {
 		ResourceMetadata metadata = mappings.getMetadataFor(type);
 		return metadata == null ? false : metadata.getExcerptProjection() != null;
 	}
+
+	@Override
+	public Class getProjectionType(Object source) {
+		if (hasExcerptProjection(source.getClass()) && null == projection)
+		{
+			ResourceMetadata metadata = mappings.getMetadataFor(source.getClass());
+			return metadata.getExcerptProjection();
+		} else {
+			return projectionDefinitions.getProjectionType(source.getClass(), projection);
+		}
+	}
+
+	@Override
+	public Object project(Object source) {
+		return projectExcerpt(source);
+	}
+
 }

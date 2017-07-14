@@ -67,6 +67,7 @@ import org.springframework.data.rest.core.event.ValidatingRepositoryEventListene
 import org.springframework.data.rest.core.mapping.RepositoryResourceMappings;
 import org.springframework.data.rest.core.mapping.ResourceDescription;
 import org.springframework.data.rest.core.mapping.ResourceMappings;
+import org.springframework.data.rest.core.projection.ProjectionDefinitions;
 import org.springframework.data.rest.core.support.DefaultSelfLinkProvider;
 import org.springframework.data.rest.core.support.DomainObjectMerger;
 import org.springframework.data.rest.core.support.EntityLookup;
@@ -170,6 +171,7 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
  * @author Greg Turnquist
  * @author Mark Paluch
  */
+@SuppressWarnings("ALL")
 @Configuration
 @EnableHypermediaSupport(type = HypermediaType.HAL)
 @ComponentScan(basePackageClasses = RepositoryRestController.class,
@@ -680,7 +682,9 @@ public class RepositoryRestMvcConfiguration extends HateoasAwareSpringDataWebCon
 		SpelAwareProxyProjectionFactory projectionFactory = new SpelAwareProxyProjectionFactory();
 		projectionFactory.setBeanFactory(applicationContext);
 
-		return new DefaultExcerptProjector(projectionFactory, resourceMappings());
+		ProjectionDefinitions projectionDefinitions = repositoryRestConfiguration().getProjectionConfiguration();
+
+		return new DefaultExcerptProjector(projectionDefinitions, projectionFactory, resourceMappings(), null);
 	}
 
 	/* 

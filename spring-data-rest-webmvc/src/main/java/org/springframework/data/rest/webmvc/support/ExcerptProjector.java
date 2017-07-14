@@ -21,7 +21,7 @@ package org.springframework.data.rest.webmvc.support;
  * @author Oliver Gierke
  * @since 2.5
  */
-public interface ExcerptProjector {
+public interface ExcerptProjector extends Projector {
 
 	/**
 	 * Creates a excerpt projection for the given source. If no excerpt projection is available, the call will fall back

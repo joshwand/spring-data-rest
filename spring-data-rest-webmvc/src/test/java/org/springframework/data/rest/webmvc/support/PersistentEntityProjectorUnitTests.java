@@ -39,7 +39,7 @@ public class PersistentEntityProjectorUnitTests {
 
 	@Mock ResourceMappings mappings;
 
-	Projector projector;
+	ExcerptProjector projector;
 	ProjectionFactory factory;
 	ProjectionDefinitionConfiguration configuration;
 

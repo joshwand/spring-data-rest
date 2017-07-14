@@ -23,6 +23,7 @@ import org.springframework.data.mapping.context.PersistentEntities;
 import org.springframework.data.rest.core.support.SelfLinkProvider;
 import org.springframework.data.rest.webmvc.PersistentEntityResource.Builder;
 import org.springframework.data.rest.webmvc.mapping.Associations;
+import org.springframework.data.rest.webmvc.support.ExcerptProjector;
 import org.springframework.data.rest.webmvc.support.Projector;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.ResourceAssembler;
@@ -39,7 +40,7 @@ import org.springframework.util.Assert;
 public class PersistentEntityResourceAssembler implements ResourceAssembler<Object, PersistentEntityResource> {
 
 	private final @NonNull PersistentEntities entities;
-	private final @NonNull Projector projector;
+	private final @NonNull ExcerptProjector projector;
 	private final @NonNull Associations associations;
 	private final @NonNull SelfLinkProvider linkProvider;
 	private final @NonNull EmbeddedWrappers wrappers = new EmbeddedWrappers(false);
@@ -52,7 +53,7 @@ public class PersistentEntityResourceAssembler implements ResourceAssembler<Obje
 	public PersistentEntityResource toResource(Object instance) {
 
 		Assert.notNull(instance, "Entity instance must not be null!");
-		return wrap(projector.projectExcerpt(instance), instance).build();
+		return wrap(projector.project(instance), instance).build();
 	}
 
 	/**

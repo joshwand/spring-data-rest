@@ -20,7 +20,7 @@ package org.springframework.data.rest.webmvc.support;
  * 
  * @author Oliver Gierke
  */
-public interface Projector extends ExcerptProjector {
+public interface Projector {
 
 	/**
 	 * Returns the projection object for the given source. This may result in the same object being returned or a
@@ -30,4 +30,12 @@ public interface Projector extends ExcerptProjector {
 	 * @return
 	 */
 	Object project(Object source);
+
+
+	/**
+	 * Returns the target projection type used by this Projector instance
+	 * @param source must not be {@literal null}.
+	 * @return
+	 */
+	Class getProjectionType(Object source);
 }

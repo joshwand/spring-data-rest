@@ -44,7 +44,7 @@ public class PersistentEntityProjector extends DefaultExcerptProjector implement
 	public PersistentEntityProjector(ProjectionDefinitions projectionDefinitions, ProjectionFactory factory,
 			String projection, ResourceMappings mappings) {
 
-		super(factory, mappings);
+		super(projectionDefinitions, factory, mappings, projection);
 
 		Assert.notNull(projectionDefinitions, "ProjectionDefinitions must not be null!");
 		Assert.notNull(factory, "ProjectionFactory must not be null!");
@@ -83,6 +83,11 @@ public class PersistentEntityProjector extends DefaultExcerptProjector implement
 				return PersistentEntityProjector.super.projectExcerpt(source);
 			}
 		});
+	}
+
+	@Override
+	public Class getProjectionType(Object source) {
+		return definitions.getProjectionType(source.getClass(), projection);
 	}
 
 	/**
